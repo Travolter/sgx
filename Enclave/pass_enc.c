@@ -1,7 +1,14 @@
-#include "pass_enc.h"
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "pass_enc_t.h"
+
+int get_secret(char* provided_password, char* out_secret);
+int set_password(char* provided_password, char* new_password);
+int set_secret(char* provided_password, char* new_secret);
+int get_number_of_tries_left( void );
+int is_acceptible_password( char* password );
+//void ocall_print( const char* format, char* value ) ;
 
 static char* secret;
 static char* password = "init";
@@ -49,7 +56,3 @@ int is_acceptible_password( char* password ) {
   return 1;
 }
 
-void ocall_print( const char* format, char* value ) {
-  printf( format, value );
-
-}
