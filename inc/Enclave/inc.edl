@@ -1,0 +1,12 @@
+enclave
+{
+	trusted 
+	{
+		public unsigned int inc( unsigned int input );
+	};
+
+	untrusted {
+	};
+};
+
+
