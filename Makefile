@@ -20,7 +20,7 @@ SCRUBDIRS            = $(SUBDIRS:%=scrub-%)
 CONFIGDIRS           = $(SUBDIRS:%=config-%)
 INSTALLDIRS          = $(SUBDIRS:%=install-%)
 UNINSTALLDIRS        = $(SUBDIRS:%=uninstall-%)
-OUTPUT               = inc
+OUTPUT               = pass
 
 .SILENT:
 all:	$(OUTPUT)
