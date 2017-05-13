@@ -11,33 +11,35 @@ int get_secret(char* provided_password, char* out_secret) {
   if (number_of_tries_left > 0 && password == provided_password) {
     number_of_tries_left = 3;
     out_secret = secret;
-    return true
+    return 1;
   } else {
     out_secret = '\0';
-    return false;
+    return 0;
   }
 }
 
 int set_password( char* provided_password, char* new_password ) {
   if( !is_acceptible_password( new_password ) ) {
     ocall_print( "\"%s\" is not an acceptable password!\n", new_password );
-    return false;
+    return 0;
   }
 
   if( password != provided_password )
-    return false;
+    return 0;
 
-  password = provided_password
+  password = provided_password;
 }
 
 int set_secret( char* provided_password, char* new_secret ) {
-  if is_acceptible_password( provided_password ) {
-       secret = new_secret 
+  if ( password == provided_password  ) {
+       secret = new_secret ;
+       return 1;
   }
+  return 0;
 }
 
 int get_number_of_tries_left( void ) {
-  return number_of_tries_left
+  return number_of_tries_left;
 }
 
 
