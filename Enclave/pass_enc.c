@@ -9,7 +9,7 @@ static unsigned int number_of_tries_left;
 
 int get_secret(char* provided_password, char* out_secret) {
   number_of_tries_left--;
-  
+
   if (number_of_tries_left > 0 && password == provided_password) {
     number_of_tries_left = 3;
     out_secret = secret;
@@ -34,8 +34,8 @@ int set_password( char* provided_password, char* new_password ) {
 
 int set_secret( char* provided_password, char* new_secret ) {
   if ( password == provided_password  ) {
-       secret = new_secret ;
-       return 1;
+    secret = new_secret ;
+    return 1;
   }
   return 0;
 }
