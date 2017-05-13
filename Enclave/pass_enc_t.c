@@ -129,11 +129,15 @@ SGX_EXTERNC const struct {
 sgx_status_t SGX_CDECL ocall_print(const char* format_string, char* value)
 {
 	sgx_status_t status = SGX_SUCCESS;
+	size_t _len_format_string = sizeof(*format_string);
+	size_t _len_value = sizeof(*value);
 
 	ms_ocall_print_t* ms = NULL;
 	size_t ocalloc_size = sizeof(ms_ocall_print_t);
 	void *__tmp = NULL;
 
+	ocalloc_size += (format_string != NULL && sgx_is_within_enclave(format_string, _len_format_string)) ? _len_format_string : 0;
+	ocalloc_size += (value != NULL && sgx_is_within_enclave(value, _len_value)) ? _len_value : 0;
 
 	__tmp = sgx_ocalloc(ocalloc_size);
 	if (__tmp == NULL) {
@@ -143,10 +147,31 @@ sgx_status_t SGX_CDECL ocall_print(const char* format_string, char* value)
 	ms = (ms_ocall_print_t*)__tmp;
 	__tmp = (void *)((size_t)__tmp + sizeof(ms_ocall_print_t));
 
-	ms->ms_format_string = SGX_CAST(char*, format_string);
-	ms->ms_value = SGX_CAST(char*, value);
+	if (format_string != NULL && sgx_is_within_enclave(format_string, _len_format_string)) {
+		ms->ms_format_string = (char*)__tmp;
+		__tmp = (void *)((size_t)__tmp + _len_format_string);
+		memcpy((void*)ms->ms_format_string, format_string, _len_format_string);
+	} else if (format_string == NULL) {
+		ms->ms_format_string = NULL;
+	} else {
+		sgx_ocfree();
+		return SGX_ERROR_INVALID_PARAMETER;
+	}
+	
+	if (value != NULL && sgx_is_within_enclave(value, _len_value)) {
+		ms->ms_value = (char*)__tmp;
+		__tmp = (void *)((size_t)__tmp + _len_value);
+		memcpy(ms->ms_value, value, _len_value);
+	} else if (value == NULL) {
+		ms->ms_value = NULL;
+	} else {
+		sgx_ocfree();
+		return SGX_ERROR_INVALID_PARAMETER;
+	}
+	
 	status = sgx_ocall(0, ms);
 
+	if (value) memcpy((void*)value, ms->ms_value, _len_value);
 
 	sgx_ocfree();
 	return status;
