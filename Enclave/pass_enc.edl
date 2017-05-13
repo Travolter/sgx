@@ -1,0 +1,14 @@
+enclave
+{
+        trusted
+        {
+                public int get_secret(char* provided_password, char* out_secret);
+                public int set_password(char* provided_password, char* new_password);
+                public int set_secret(char* provided_password, char* new_secret);
+                public int get_number_of_tries_left( void );
+        };
+
+        untrusted
+        {
+        };
+}
