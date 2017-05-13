@@ -10,5 +10,6 @@ enclave
 
         untrusted
         {
+	void ocall_print( [user_check] const char* format_string, [user_check] char* value);
         };
 };

@@ -16,6 +16,7 @@
 extern "C" {
 #endif
 
+void SGX_UBRIDGE(SGX_NOCONVENTION, ocall_print, (const char* format_string, char* value));
 
 sgx_status_t get_secret(sgx_enclave_id_t eid, int* retval, char* provided_password, char* out_secret);
 sgx_status_t set_password(sgx_enclave_id_t eid, int* retval, char* provided_password, char* new_password);

@@ -21,6 +21,7 @@ int set_password(char* provided_password, char* new_password);
 int set_secret(char* provided_password, char* new_secret);
 int get_number_of_tries_left();
 
+sgx_status_t SGX_CDECL ocall_print(const char* format_string, char* value);
 
 #ifdef __cplusplus
 }

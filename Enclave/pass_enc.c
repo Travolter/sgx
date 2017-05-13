@@ -1,5 +1,7 @@
+#include "pass_enc.h"
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
 
 static char* secret;
 static char* password = "init";
@@ -43,3 +45,11 @@ int get_number_of_tries_left( void ) {
 }
 
 
+int is_acceptible_password( char* password ) {
+  return 1;
+}
+
+void ocall_print( const char* format, char* value ) {
+  printf( format, value );
+
+}

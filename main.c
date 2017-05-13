@@ -16,11 +16,11 @@ int main( int argc, char **argv )
 		printf( "Failed to create enclave\n" );
 		return -1;
 	}
-        static char* provided_password = "init"
-        static char* new_password = "init2"
+        static char* provided_password = "init";
+        static char* new_password = "init2";
 	if ( SGX_SUCCESS != (ret = set_password( eid, &output, provided_password, new_password ) ) )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
-		printf( "%i −> %i\n", provided_password, new_password );
+		printf( "%s −> %s\n", provided_password, new_password );
 	
 }

@@ -39,6 +39,11 @@ typedef struct ms_get_number_of_tries_left_t {
 	int ms_retval;
 } ms_get_number_of_tries_left_t;
 
+typedef struct ms_ocall_print_t {
+	char* ms_format_string;
+	char* ms_value;
+} ms_ocall_print_t;
+
 static sgx_status_t SGX_CDECL sgx_get_secret(void* pms)
 {
 	ms_get_secret_t* ms = SGX_CAST(ms_get_secret_t*, pms);
@@ -112,8 +117,38 @@ SGX_EXTERNC const struct {
 
 SGX_EXTERNC const struct {
 	size_t nr_ocall;
+	uint8_t entry_table[1][4];
 } g_dyn_entry_table = {
-	0,
+	1,
+	{
+		{0, 0, 0, 0, },
+	}
 };
 
+
+sgx_status_t SGX_CDECL ocall_print(const char* format_string, char* value)
+{
+	sgx_status_t status = SGX_SUCCESS;
+
+	ms_ocall_print_t* ms = NULL;
+	size_t ocalloc_size = sizeof(ms_ocall_print_t);
+	void *__tmp = NULL;
+
+
+	__tmp = sgx_ocalloc(ocalloc_size);
+	if (__tmp == NULL) {
+		sgx_ocfree();
+		return SGX_ERROR_UNEXPECTED;
+	}
+	ms = (ms_ocall_print_t*)__tmp;
+	__tmp = (void *)((size_t)__tmp + sizeof(ms_ocall_print_t));
+
+	ms->ms_format_string = SGX_CAST(char*, format_string);
+	ms->ms_value = SGX_CAST(char*, value);
+	status = sgx_ocall(0, ms);
+
+
+	sgx_ocfree();
+	return status;
+}
 

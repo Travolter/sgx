@@ -11,7 +11,7 @@ SUBDIRS              = Enclave
 LIB_SGX_URTS         = -lsgx_urts
 LIB_UAE_SERVICE      = -lsgx_uae_service
 
-LIBS                 = -linc_proxy $(LIB_SGX_URTS) $(LIB_UAE_SERVICE) -lpthread
+LIBS                 = -lpass_enc_proxy $(LIB_SGX_URTS) $(LIB_UAE_SERVICE) -lpthread
 LIB_DIRS             = $(SUBDIRS:%=-L %)                                            \
 			$(patsubst %,-L%,$(subst :, ,$(SGX_LIBS)))
 BUILDDIRS            = $(SUBDIRS:%=build-%)
@@ -20,7 +20,7 @@ SCRUBDIRS            = $(SUBDIRS:%=scrub-%)
 CONFIGDIRS           = $(SUBDIRS:%=config-%)
 INSTALLDIRS          = $(SUBDIRS:%=install-%)
 UNINSTALLDIRS        = $(SUBDIRS:%=uninstall-%)
-OUTPUT               = pass
+OUTPUT               = pass_enc
 
 .SILENT:
 all:	$(OUTPUT)

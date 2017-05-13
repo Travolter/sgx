@@ -23,12 +23,27 @@ typedef struct ms_get_number_of_tries_left_t {
 	int ms_retval;
 } ms_get_number_of_tries_left_t;
 
+typedef struct ms_ocall_print_t {
+	char* ms_format_string;
+	char* ms_value;
+} ms_ocall_print_t;
+
+static sgx_status_t SGX_CDECL pass_enc_ocall_print(void* pms)
+{
+	ms_ocall_print_t* ms = SGX_CAST(ms_ocall_print_t*, pms);
+	ocall_print((const char*)ms->ms_format_string, ms->ms_value);
+
+	return SGX_SUCCESS;
+}
+
 static const struct {
 	size_t nr_ocall;
 	void * table[1];
 } ocall_table_pass_enc = {
-	0,
-	{ NULL },
+	1,
+	{
+		(void*)pass_enc_ocall_print,
+	}
 };
 sgx_status_t get_secret(sgx_enclave_id_t eid, int* retval, char* provided_password, char* out_secret)
 {
