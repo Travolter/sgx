@@ -16,13 +16,13 @@ char password[25] = "password";
 unsigned int number_of_tries_left = 3;
 
 int get_secret(char* provided_password, char* out_secret) {
-  number_of_tries_left--;
 
   if (number_of_tries_left > 0 && strcmp(password, provided_password) == 0) {
     number_of_tries_left = 3;
     strncpy(out_secret, secret, sizeof(secret));
     return 1;
   } else {
+    number_of_tries_left--;
     strncpy(out_secret, "null", sizeof(secret));
     return 0;
   }
