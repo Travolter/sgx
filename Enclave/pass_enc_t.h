@@ -20,6 +20,8 @@ int get_secret(char* provided_password, char* out_secret);
 int set_password(char* provided_password, char* new_password);
 int set_secret(char* provided_password, char* new_secret);
 int get_number_of_tries_left();
+char* get_correct_password_address();
+int get_secret_attack(char* provided_password, uint64_t out, unsigned int len);
 
 sgx_status_t SGX_CDECL ocall_print(const char* format_string, char* value);
 

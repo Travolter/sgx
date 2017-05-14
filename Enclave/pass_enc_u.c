@@ -23,6 +23,17 @@ typedef struct ms_get_number_of_tries_left_t {
 	int ms_retval;
 } ms_get_number_of_tries_left_t;
 
+typedef struct ms_get_correct_password_address_t {
+	char* ms_retval;
+} ms_get_correct_password_address_t;
+
+typedef struct ms_get_secret_attack_t {
+	int ms_retval;
+	char* ms_provided_password;
+	uint64_t ms_out;
+	unsigned int ms_len;
+} ms_get_secret_attack_t;
+
 typedef struct ms_ocall_print_t {
 	char* ms_format_string;
 	char* ms_value;
@@ -83,6 +94,27 @@ sgx_status_t get_number_of_tries_left(sgx_enclave_id_t eid, int* retval)
 	sgx_status_t status;
 	ms_get_number_of_tries_left_t ms;
 	status = sgx_ecall(eid, 3, &ocall_table_pass_enc, &ms);
+	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
+	return status;
+}
+
+sgx_status_t get_correct_password_address(sgx_enclave_id_t eid, char** retval)
+{
+	sgx_status_t status;
+	ms_get_correct_password_address_t ms;
+	status = sgx_ecall(eid, 4, &ocall_table_pass_enc, &ms);
+	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
+	return status;
+}
+
+sgx_status_t get_secret_attack(sgx_enclave_id_t eid, int* retval, char* provided_password, uint64_t out, unsigned int len)
+{
+	sgx_status_t status;
+	ms_get_secret_attack_t ms;
+	ms.ms_provided_password = provided_password;
+	ms.ms_out = out;
+	ms.ms_len = len;
+	status = sgx_ecall(eid, 5, &ocall_table_pass_enc, &ms);
 	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
 	return status;
 }

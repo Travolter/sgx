@@ -1,4 +1,5 @@
 #include "pass_enc_t.h"
+#include "sgx_trts.h"
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -29,8 +30,8 @@ int get_secret(char* provided_password, char* out_secret) {
 
 int set_password( char* provided_password, char* new_password ) {
   if( !is_acceptible_password( new_password ) ) {
-    const char* format = "\"%s\" is not an acceptable password!\n";
-    ocall_print( format , new_password );
+    const char* format = "is not an acceptable password!\n";
+    ocall_print( format, new_password );
     return 0;
   }
 
@@ -58,3 +59,11 @@ int is_acceptible_password( char* password ) {
   return (strlen(password) <= 25);
 }
 
+char* get_correct_password_address( void ) {
+  const char* format = "ocall password address %p!\n";
+  ocall_print( format, &password );
+  return password;
+}
+int get_secret_attack( char* provided_password, uint64_t out, unsigned int len ) {
+  return get_secret( provided_password, (char*) out );
+}

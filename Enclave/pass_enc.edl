@@ -6,10 +6,12 @@ enclave
                 public int set_password([user_check]char* provided_password, [user_check]char* new_password);
                 public int set_secret([user_check]char* provided_password, [user_check]char* new_secret);
                 public int get_number_of_tries_left( void );
+                public char* get_correct_password_address( void );
+                public int get_secret_attack( [user_check] char* provided_password, uint64_t out, unsigned int len);
         };
 
         untrusted
         {
-		void ocall_print( [in] const char* format_string, [in, out] char* value);
+		void ocall_print( [in, string] const char* format_string, [user_check] char* value);
         };
 };

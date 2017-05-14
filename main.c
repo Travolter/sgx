@@ -6,7 +6,6 @@
 #define DEBUG_ENCLAVE 1
 
 void ocall_print(const char* format, char* value) {
-  printf( "print" );
   printf( format, value );
 }
 int main( int argc, char **argv )
@@ -116,4 +115,21 @@ int main( int argc, char **argv )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
 		printf( "%i, %s −> %s\n", output, new_password, long_password );
+
+	char** passwordaddress;
+	/*
+	try to retrieve secret using get_corret_password_address
+	 */
+	if ( SGX_SUCCESS != (ret = get_correct_password_address( eid, &passwordaddress ) ) )
+		printf( "Error calling enclave\n (error 0x%x)\n", ret );
+	else
+		printf( "Password address: %p\n", passwordaddress );
+
+	uint64_t out = (char*) malloc(sizeof(char) * 25);
+	unsigned int len;
+	if ( SGX_SUCCESS != (ret = get_secret_attack( eid, &output, passwordaddress, out, len) ) )
+		printf( "Error calling enclave\n (error 0x%x)\n", ret );
+	else
+		printf( "Secret attack: %s\n", out );
+
 }
