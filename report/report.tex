@@ -106,5 +106,10 @@ to extract the secret, explain what you tried to do.}
 the security challenges?}
 
 In order to keep state continuity, the Enclave should be able to store it's
-state on disk.
+state on disk. It can do this safely by using the earlier discussed derived key.
+In addition it requires the use of two principles: (1) Storing state+input before it
+is processed and (2) any non-determinism should be treated as input and trigger
+a storing of state.
+
+
 \end{document}
