@@ -5,6 +5,7 @@ typedef struct ms_get_secret_t {
 	int ms_retval;
 	char* ms_provided_password;
 	char* ms_out_secret;
+	size_t ms_len;
 } ms_get_secret_t;
 
 typedef struct ms_set_password_t {
@@ -56,12 +57,13 @@ static const struct {
 		(void*)pass_enc_ocall_print,
 	}
 };
-sgx_status_t get_secret(sgx_enclave_id_t eid, int* retval, char* provided_password, char* out_secret)
+sgx_status_t get_secret(sgx_enclave_id_t eid, int* retval, char* provided_password, char* out_secret, size_t len)
 {
 	sgx_status_t status;
 	ms_get_secret_t ms;
 	ms.ms_provided_password = provided_password;
 	ms.ms_out_secret = out_secret;
+	ms.ms_len = len;
 	status = sgx_ecall(eid, 0, &ocall_table_pass_enc, &ms);
 	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
 	return status;

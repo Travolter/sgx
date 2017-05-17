@@ -38,11 +38,15 @@ int main( int argc, char **argv )
 	Get secret using intial password (=old_password)
 	 */
         char* secret = (char*) malloc(sizeof(char) * 25);
-	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, old_password, secret ) ) )
+	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, old_password, secret , sizeof(char) * 25 ) ) )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
-		printf( "used password: %s, ", old_password );
-		printf( "Secret is: %s\n ", secret );
+		if (output) {
+			printf( "used password: %s, ", new_password );
+			printf( "Secret is: %s\n ", secret );
+		} else {
+			printf( "used password: %s, was invalid \n", new_password );
+		}
 
         secret = (char*) malloc(sizeof(char) * 25);
 	/*
@@ -71,11 +75,15 @@ int main( int argc, char **argv )
 	/*
 	Get secret using new password 
 	 */
-	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, new_password, secret ) ) )
+	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, new_password, secret , sizeof(char) * 25) ) )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
-		printf( "used password: %s, ", new_password );
-		printf( "Secret is: %s\n ", secret );
+		if (output) {
+			printf( "used password: %s, ", new_password );
+			printf( "Secret is: %s\n ", secret );
+		} else {
+			printf( "used password: %s, was invalid \n", new_password );
+		}
 	/*
 	 check number of tries left
 	 */
@@ -103,11 +111,15 @@ int main( int argc, char **argv )
 	/*
 	Retrieve new secret using the new password
 	 */
-	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, new_password, secret ) ) )
+	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, new_password, secret , sizeof(char) * 25) ) )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
-		printf( "used password: %s, ", new_password );
-		printf( "Secret is: %s\n ", secret );
+		if (output) {
+			printf( "used password: %s, ", new_password );
+			printf( "Secret is: %s\n ", secret );
+		} else {
+			printf( "used password: %s, was invalid \n", new_password );
+		}
 	/*
 	try to set long_password
 	 */
@@ -116,20 +128,37 @@ int main( int argc, char **argv )
 	else
 		printf( "%i, %s −> %s\n", output, new_password, long_password );
 
-	char** passwordaddress;
+        char* secret = (char*) malloc(sizeof(char) * 25);
+	char* passwordaddress;
 	/*
 	try to retrieve secret using get_corret_password_address
 	 */
 	if ( SGX_SUCCESS != (ret = get_correct_password_address( eid, &passwordaddress ) ) )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
-		printf( "Password address: %p\n", passwordaddress );
+		printf( "Password address: %p\n", passwordaddress);
 
-	uint64_t out = (char*) malloc(sizeof(char) * 25);
+	char* out = (char*) malloc(sizeof(char) * 25);
 	unsigned int len;
-	if ( SGX_SUCCESS != (ret = get_secret_attack( eid, &output, passwordaddress, out, len) ) )
+	if ( SGX_SUCCESS != (ret = get_secret_attack( eid, &output, "wrongpassword", (uint64_t) passwordaddress, sizeof(char) * 25) ) )
 		printf( "Error calling enclave\n (error 0x%x)\n", ret );
 	else
-		printf( "Secret attack: %s\n", out );
+		if (output) {
+			printf( "used password: %s, ", new_password );
+			printf( "Secret is: %s\n ", secret );
+		} else {
+			printf( "wrong password was given \n" );
+		}
+
+	secret = (char*) malloc(sizeof(char) * 25);
+	if ( SGX_SUCCESS != (ret = get_secret( eid, &output, "\0", secret , sizeof(char) * 25 ) ) )
+		printf( "Error calling enclave\n (error 0x%x)\n", ret );
+	else
+		if (output) {
+			printf( "used password: %s, ", new_password );
+			printf( "Secret is: %s\n ", secret );
+		} else {
+			printf( "used password: %s, was invalid \n", new_password );
+		}
 
 }

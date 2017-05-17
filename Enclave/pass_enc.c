@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-int get_secret(char* provided_password, char* out_secret);
+int get_secret(char* provided_password, char* out_secret, size_t len);
 int set_password(char* provided_password, char* new_password);
 int set_secret(char* provided_password, char* new_secret);
 int get_number_of_tries_left( void );
@@ -23,14 +23,14 @@ int get_secret(char* provided_password, char* out_secret, size_t len) {
     return 1;
   } else {
     number_of_tries_left--;
-    strncpy(out_secret, "null", sizeof(secret));
+    out_secret = "\0";
     return 0;
   }
 }
 
 int set_password( char* provided_password, char* new_password ) {
   if( !is_acceptible_password( new_password ) ) {
-    const char* format = "is not an acceptable password!\n";
+    const char* format = "%s is not an acceptable password!\n";
     ocall_print( format, new_password );
     return 0;
   }
@@ -60,10 +60,8 @@ int is_acceptible_password( char* password ) {
 }
 
 char* get_correct_password_address( void ) {
-  const char* format = "ocall password address %p!\n";
-  ocall_print( format, &password );
   return password;
 }
 int get_secret_attack( char* provided_password, uint64_t out, unsigned int len ) {
-  return get_secret( provided_password, (char*) out );
+  return get_secret( provided_password, (char*) out, len);
 }
