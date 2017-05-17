@@ -54,7 +54,13 @@ copying from protected memory so it can only be accessed at boot time.
 \subsection{It is obvious why an attacker should not be able to directly access the
 stored secret, but why do we need to define what the entry points are?
 What could go wrong?}
-
+The intel sgx hardware makes it possible to protect a certain part of the
+memory. Once inside the enclave it is possible to exectute all code in that
+memory range. There must be a secure way to access this trusted code. The
+trusted code requires input to interact with the secret. The hardware cannot
+magically protect against every kind of attack, it only isolates code. Thus it's
+the programmers responsibity to validate the user input. Without well defined
+entrypoints, programmers cannot do proper validation checks.
 
 \subsection{When the enclave is created, what prevents an attacker from adding a new
 entry point that returns the secret
