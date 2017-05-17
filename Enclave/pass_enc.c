@@ -15,7 +15,7 @@ char secret[25] = "secret";
 char password[25] = "password";
 unsigned int number_of_tries_left = 3;
 
-int get_secret(char* provided_password, char* out_secret) {
+int get_secret(char* provided_password, char* out_secret, size_t len) {
 
   if (number_of_tries_left > 0 && strcmp(password, provided_password) == 0) {
     number_of_tries_left = 3;

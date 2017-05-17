@@ -2,16 +2,16 @@ enclave
 {
         trusted
         {
-                public int get_secret([user_check] char* provided_password, [user_check]char* out_secret);
-                public int set_password([user_check]char* provided_password, [user_check]char* new_password);
-                public int set_secret([user_check]char* provided_password, [user_check]char* new_secret);
+                public int get_secret([in, string] char* provided_password, [out, size=len]char* out_secret, size_t len);
+                public int set_password([in, string]char* provided_password, [in]char* new_password);
+                public int set_secret([in, string]char* provided_password, [in]char* new_secret);
                 public int get_number_of_tries_left( void );
                 public char* get_correct_password_address( void );
-                public int get_secret_attack( [user_check] char* provided_password, uint64_t out, unsigned int len);
+                public int get_secret_attack( [in, string] char* provided_password, uint64_t out, unsigned int len);
         };
 
         untrusted
         {
-		void ocall_print( [in, string] const char* format_string, [user_check] char* value);
+		void ocall_print( [in, string] const char* format_string, [in] char* value);
         };
 };

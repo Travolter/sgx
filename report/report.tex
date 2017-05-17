@@ -94,6 +94,17 @@ branch of the check.
   though you didn’t know the correct password?   Draw an image of the
   memory layout and describe what happened.  In case you didn’t manage
 to extract the secret, explain what you tried to do.}
+
+The \texttt{get\_correct\_password\_address} returns a pointer to an address in
+the isolated memory space. While it is not possible to read these addresses
+in the untrusted part of the code. Providing this pointer to an entrypoint is
+ofcourse still possible. It would be up to the programmer to check this input. 
+
+Strings in C do not exist. The \texttt{Char*} type is used to represent strings.
+Which is basically a pointer to an array of chars. This means that when we
+provide the pointer to the password in the protected memory space, the trusted
+code can and will read this as a correctly given password.
+
 \subsection{The newly added
   get
   secret
