@@ -100,11 +100,9 @@ the isolated memory space. While it is not possible to read these addresses
 in the untrusted part of the code. Providing this pointer to an entrypoint is
 ofcourse still possible. It would be up to the programmer to check this input. 
 
-Strings in C do not exist. The \texttt{Char*} type is used to represent strings.
-Which is basically a pointer to an array of chars. This means that when we
-provide the pointer to the password in the protected memory space, the trusted
-code can and will read this as a correctly given password.
-
+When providing the pointer to the password's address as the \texttt{output}
+parameter, it will be overridden as the empty string when a wrong password is
+provided. Hence later we can try to access the secret with an empty password.
 \subsection{The newly added
   get
   secret
@@ -119,6 +117,9 @@ code can and will read this as a correctly given password.
   use a
   char *
   .  Why not?  }
+
+  This is necessary because the esger8er tool (?) does a check on
+  pointers to a string. It checks if the pointer does not point to protected memory. Changing this to an int, removes this check.
 \subsection{Propose how to make the enclave keep its state over reboots.  What are
 the security challenges?}
 
