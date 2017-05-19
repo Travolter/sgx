@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{graphicx}
 \begin{document}
-
 \title{Capita selecta III: Protexted-Module Architectures} 
 \author{André Jacobs}
 \date{}
@@ -79,16 +79,16 @@ cryptographic key would not match anymore.
   out indefinitely.  Is this implemented correctly in the pseudocode or your
 implementation?  What can go wrong?  How did you fix the vulnerability?}
 
-No, the hacker can still attempt to provide a password, lower the
+No, the hacker can still attempt to provide a password, and lower the
 \texttt{numer\_of\_tries\_left} counter. This will result in an integer
 overflow. While officially this is defined as undefined behaviour, on many
 modern machine's using 2-complement representation this can result in a wrap
-around, maken the variable positive again. If that's not the case, it can simply
+around, making the variable positive again. If that's not the case, it can simply
 crash the program. This is also not wanted behaviour. Especially if state
 continuity is not guarantueed.
 
 This vulnerability can be solved by moving the decrement operation to the else
-branch of the check.
+branch of the check. Or by returning immediately when the counter is 0.
 
 \subsection{How did you trick the enclave into providing you with the secret, even
   though you didn’t know the correct password?   Draw an image of the
@@ -96,20 +96,24 @@ branch of the check.
 to extract the secret, explain what you tried to do.}
 
 The \texttt{get\_correct\_password\_address} returns a pointer to an address in
-the isolated memory space. While it is not possible to read these addresses
+the isolated memory space. It is not possible to read these addresses
 in the untrusted part of the code. Providing this pointer to an entrypoint is
-ofcourse still possible. It would be up to the programmer to check this input. 
+still possible. It would be up to the programmer to check this input. 
 
 When providing the pointer to the password's address as the \texttt{output}
 parameter, it will be overridden as the empty string when a wrong password is
 provided. Hence later we can try to access the secret with an empty password.
+
+  \begin{figure}
+    \includegraphics[width=0.99\textwidth]{./sgx.png}
+  \end{figure}
+
 \subsection{The newly added
   get
   secret
   attack
   entry point casts an
-  uint64
-  t
+  uint64\_t
   to
   a
   char *
@@ -118,12 +122,20 @@ provided. Hence later we can try to access the secret with an empty password.
   char *
   .  Why not?  }
 
-  This is necessary because the esger8er tool (?) does a check on
-  pointers to a string. It checks if the pointer does not point to protected memory. Changing this to an int, removes this check.
+  This is necessary because when using the \texttt{[in, string]}-check in the
+  \texttt{edl-file}, the edgr8r tool writes a check on
+  pointers to a string (method \texttt{CHECK\_REF\_POINTER} checks
+    \texttt{sgx\_is\_outside\_enclave}). It checks if the pointer does not point to protected
+  memory. Changing the parameter to an int, removes the possibilty to perform
+  this check. That is why it is not
+  possible to simply provide the address as a \texttt{char*} as the provided
+  password, since we would always need it to me a string (\texttt{char*}) to do
+  a string comparison.
+
 \subsection{Propose how to make the enclave keep its state over reboots.  What are
 the security challenges?}
 
-In order to keep state continuity, the Enclave should be able to store it's
+In order to keep state continuity, the Enclave should store it's
 state on disk. It can do this safely by using the earlier discussed derived key.
 In addition it requires the use of two principles: (1) Storing state+input before it
 is processed and (2) any non-determinism should be treated as input and trigger
